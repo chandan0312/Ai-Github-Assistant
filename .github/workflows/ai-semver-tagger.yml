@@ -19,6 +19,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: true
+          ref: main
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -35,3 +36,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_PAT: ${{ secrets.REPO_PAT }}
         run: python .github/actions/semver_tagger.py
+
