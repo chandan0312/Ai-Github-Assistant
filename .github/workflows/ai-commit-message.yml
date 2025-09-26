@@ -1,0 +1,39 @@
+name: AI Auto Commit Message
+
+on:
+  push:
+    # do not run on main/master to avoid rewriting history on protected branches
+    branches-ignore:
+      - main
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  generate-commit-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r .github/actions/requirements.txt
+
+      - name: Generate & push AI commit message
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/actions/commit_message.py
